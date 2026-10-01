@@ -11,14 +11,14 @@ use pocketmine\player\Player;
 
 final class FakePlayer{
 
-	private FakePlayerNetworkSession $session;
-	private Player $player;
+	readonly public FakePlayerNetworkSession $session;
+	readonly public Player $player;
 
 	/** @phpstan-var SortedMap<int, FakePlayerBehaviour> */
 	private SortedMap $behaviours;
 
 	/** @var array<string, mixed> */
-	private array $metadata = [];
+	public array $metadata = [];
 
 	public function __construct(FakePlayerNetworkSession $session){
 		$this->session = $session;
@@ -26,10 +26,16 @@ final class FakePlayer{
 		$this->behaviours = new SortedMap();
 	}
 
+	/**
+	 * @deprecated use {@see self::$player} directly.
+	 */
 	public function getPlayer() : Player{
 		return $this->player;
 	}
 
+	/**
+	 * @deprecated use {@see self::$player} directly.
+	 */
 	public function getPlayerNullable() : ?Player{
 		return $this->player;
 	}
@@ -42,6 +48,9 @@ final class FakePlayer{
 		$this->metadata = [];
 	}
 
+	/**
+	 * @deprecated use {@see self::$session} directly.
+	 */
 	public function getNetworkSession() : FakePlayerNetworkSession{
 		return $this->session;
 	}
@@ -73,14 +82,23 @@ final class FakePlayer{
 		}
 	}
 
+	/**
+	 * @deprecated use {@see self::$metadata} directly
+	 */
 	public function getMetadata(string $key, mixed $default = null) : mixed{
 		return $this->metadata[$key] ?? $default;
 	}
 
+	/**
+	 * @deprecated use {@see self::$metadata} directly
+	 */
 	public function setMetadata(string $key, mixed $value) : void{
 		$this->metadata[$key] = $value;
 	}
 
+	/**
+	 * @deprecated use {@see self::$metadata} directly
+	 */
 	public function deleteMetadata(string $key) : void{
 		unset($this->metadata[$key]);
 	}

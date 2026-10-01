@@ -32,7 +32,7 @@ final class AutoEquipArmorFakePlayerBehaviour implements FakePlayerBehaviour{
 			}
 
 			$fake_player = $plugin->getFakePlayer($entity);
-			if($fake_player === null || $fake_player->getMetadata(self::METADATA_KEY) === null){
+			if($fake_player === null || !isset($fake_player->metadata[self::METADATA_KEY])){
 				return;
 			}
 
@@ -61,11 +61,11 @@ final class AutoEquipArmorFakePlayerBehaviour implements FakePlayerBehaviour{
 	}
 
 	public function onAddToPlayer(FakePlayer $player) : void{
-		$player->setMetadata(self::METADATA_KEY, true);
+		$player->metadata[self::METADATA_KEY] = true;
 	}
 
 	public function onRemoveFromPlayer(FakePlayer $player) : void{
-		$player->deleteMetadata(self::METADATA_KEY);
+		unset($player->metadata[self::METADATA_KEY]);
 	}
 
 	public function tick(FakePlayer $player) : void{

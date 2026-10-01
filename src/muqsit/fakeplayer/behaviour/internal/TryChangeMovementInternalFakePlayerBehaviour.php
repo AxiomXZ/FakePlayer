@@ -58,7 +58,7 @@ final class TryChangeMovementInternalFakePlayerBehaviour implements FakePlayerBe
 			throw new RuntimeException("Listener was already added");
 		}
 
-		$player_instance = $player->getPlayer();
+		$player_instance = $player->player;
 		$player_instance->keepMovement = false;
 		self::changeDrag($player_instance);
 
@@ -69,11 +69,11 @@ final class TryChangeMovementInternalFakePlayerBehaviour implements FakePlayerBe
 				$this->data->motion = $packet->motion->asVector3();
 			}
 		});
-		$player->getNetworkSession()->registerSpecificPacketListener(SetActorMotionPacket::class, $this->motion_packet_listener);
+		$player->session->registerSpecificPacketListener(SetActorMotionPacket::class, $this->motion_packet_listener);
 	}
 
 	public function onRemoveFromPlayer(FakePlayer $player) : void{
-		$player->getNetworkSession()->unregisterSpecificPacketListener(
+		$player->session->unregisterSpecificPacketListener(
 			SetActorMotionPacket::class,
 			$this->motion_packet_listener ?? throw new RuntimeException("Listener was already removed")
 		);
@@ -81,7 +81,7 @@ final class TryChangeMovementInternalFakePlayerBehaviour implements FakePlayerBe
 	}
 
 	public function tick(FakePlayer $player) : void{
-		$player_instance = $player->getPlayer();
+		$player_instance = $player->player;
 		self::writeMovementToPlayer($player_instance, $this->data->motion);
 		self::tryChangeMovement($player_instance);
 	}

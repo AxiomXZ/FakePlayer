@@ -56,7 +56,7 @@ class PvPFakePlayerBehaviour implements FakePlayerBehaviour{
 	}
 
 	public function tick(FakePlayer $fake_player) : void{
-		$player = $fake_player->getPlayer();
+		$player = $fake_player->player;
 		if($player->onGround && $player->isAlive()){
 			$motion = $player->getMotion();
 			if($motion->y == 0){

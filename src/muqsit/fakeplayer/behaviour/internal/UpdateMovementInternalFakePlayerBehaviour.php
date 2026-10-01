@@ -53,7 +53,7 @@ final class UpdateMovementInternalFakePlayerBehaviour implements FakePlayerBehav
 	}
 
 	public function tick(FakePlayer $player) : void{
-		$player_instance = $player->getPlayer();
+		$player_instance = $player->player;
 		$this->data->motion = self::readMovementFromPlayer($player_instance);
 		if($player_instance->hasMovementUpdate()){
 			$this->data->motion = $this->data->motion->withComponents(
