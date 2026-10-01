@@ -8,10 +8,7 @@ use muqsit\fakeplayer\Loader;
 
 final class FakePlayerBehaviourFactory{
 
-	/**
-	 * @var string[]|FakePlayerBehaviour[]
-	 * @phpstan-var class-string<FakePlayerBehaviour>[]
-	 */
+	/** @var array<string, class-string<FakePlayerBehaviour>> */
 	private static array $behaviours = [];
 
 	public static function registerDefaults(Loader $plugin) : void{
@@ -22,9 +19,7 @@ final class FakePlayerBehaviourFactory{
 	/**
 	 * @param Loader $plugin
 	 * @param string $identifier
-	 * @param string|FakePlayerBehaviour $class
-	 *
-	 * @phpstan-param class-string<FakePlayerBehaviour> $class
+	 * @param class-string<FakePlayerBehaviour> $class
 	 */
 	public static function register(Loader $plugin, string $identifier, string $class) : void{
 		self::$behaviours[$identifier] = $class;
@@ -33,10 +28,8 @@ final class FakePlayerBehaviourFactory{
 
 	/**
 	 * @param string $identifier
-	 * @param mixed[] $data
+	 * @param array<string, mixed> $data
 	 * @return FakePlayerBehaviour
-	 *
-	 * @phpstan-param array<string, mixed> $data
 	 */
 	public static function create(string $identifier, array $data) : FakePlayerBehaviour{
 		return self::$behaviours[$identifier]::create($data);

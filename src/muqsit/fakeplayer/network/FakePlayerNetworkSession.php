@@ -23,7 +23,7 @@ use ReflectionProperty;
 
 class FakePlayerNetworkSession extends NetworkSession{
 
-	/** @var FakePlayerPacketListener[] */
+	/** @var array<int, FakePlayerPacketListener> */
 	private array $packet_listeners = [];
 
 	/** @var PromiseResolver<Player>|null */
@@ -39,6 +39,7 @@ class FakePlayerNetworkSession extends NetworkSession{
 	 * @param PacketBroadcaster $broadcaster
 	 * @param EntityEventBroadcaster $entityEventBroadcaster
 	 * @param Compressor $compressor
+	 * @param TypeConverter $typeConverter
 	 * @param string $ip
 	 * @param int $port
 	 * @param PromiseResolver<Player> $player_add_resolver

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace muqsit\fakeplayer;
 
-use Closure;
 use InvalidArgumentException;
 use muqsit\fakeplayer\behaviour\FakePlayerBehaviourFactory;
 use muqsit\fakeplayer\behaviour\internal\FakePlayerMovementData;
@@ -49,10 +48,10 @@ use function file_get_contents;
 
 final class Loader extends PluginBase implements Listener{
 
-	/** @var FakePlayerListener[] */
+	/** @var array<int, FakePlayerListener> */
 	private array $listeners = [];
 
-	/** @var FakePlayer[] */
+	/** @var array<non-empty-string, FakePlayer> */
 	private array $fake_players = [];
 
 	/** @var array<string, mixed> */
@@ -106,9 +105,7 @@ final class Loader extends PluginBase implements Listener{
 		if($configured_players_add_delay === -1){
 			$this->addConfiguredPlayers();
 		}elseif($configured_players_add_delay !== null){
-			$this->getScheduler()->scheduleDelayedTask(new ClosureTask(function() : void{
-				$this->addConfiguredPlayers();
-			}), (int) $configured_players_add_delay);
+			$this->getScheduler()->scheduleDelayedTask(new ClosureTask($this->addConfiguredPlayers(...)), (int) $configured_players_add_delay);
 		}
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 	}
@@ -202,10 +199,7 @@ final class Loader extends PluginBase implements Listener{
 	}
 
 	public function removePlayer(Player $player, bool $disconnect = true) : void{
-		if(!$this->isFakePlayer($player)){
-			throw new InvalidArgumentException("Invalid Player supplied, expected a fake player, got " . $player->getName());
-		}
-
+		$this->isFakePlayer($player) || throw new InvalidArgumentException("Invalid Player supplied, expected a fake player, got " . $player->getName());
 		if(!isset($this->fake_players[$id = $player->getUniqueId()->getBytes()])){
 			return;
 		}
@@ -223,7 +217,7 @@ final class Loader extends PluginBase implements Listener{
 	}
 
 	/**
-	 * @return array<string, FakePlayerInfo>
+	 * @return array<non-empty-lowercase-string, FakePlayerInfo>
 	 */
 	public function readConfiguredPlayers() : array{
 		$players = json_decode(Filesystem::fileGetContents(Path::join($this->getDataFolder(), "players.json")), true, 512, JSON_THROW_ON_ERROR);
@@ -233,15 +227,16 @@ final class Loader extends PluginBase implements Listener{
 		$skin = new Skin("Standard_Custom", $skin_data);
 
 		$result = [];
-		foreach($players as $uuid => $data){
+		foreach($players as $uuid_string => $data){
 			["xuid" => $xuid, "gamertag" => $gamertag] = $data;
-			$result[$uuid] = new FakePlayerInfo(Uuid::fromString($uuid), $xuid, $gamertag, $skin, $data["extra_data"] ?? [], $data["behaviours"] ?? []);
+			$uuid = Uuid::fromString($uuid_string);
+			$result[$uuid->toString()] = new FakePlayerInfo($uuid, $xuid, $gamertag, $skin, $data["extra_data"] ?? [], $data["behaviours"] ?? []);
 		}
 		return $result;
 	}
 
 	/**
-	 * @return array<string, Promise<Player>>
+	 * @return array<non-empty-lowercase-string, Promise<Player>>
 	 */
 	public function addConfiguredPlayers() : array{
 		return array_map($this->addPlayer(...), $this->readConfiguredPlayers());

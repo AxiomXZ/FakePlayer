@@ -10,7 +10,10 @@ use pocketmine\utils\Utils;
 
 final class ClosureFakePlayerListener implements FakePlayerListener{
 
+	/** @var Closure(Player) : void */
 	private Closure $on_player_add;
+
+	/** @var Closure(Player) : void */
 	private Closure $on_player_remove;
 
 	public function __construct(Closure $on_player_add, Closure $on_player_remove){

@@ -31,12 +31,12 @@ final class FakePlayerInfoBuilder{
 	 * @param array<string, array<string, mixed>> $behaviours
 	 */
 	private function __construct(
-		private UuidInterface $uuid,
-		private string $xuid,
-		private string $username,
-		private Skin $skin,
-		private array $extra_data,
-		private array $behaviours
+		public UuidInterface $uuid,
+		public string $xuid,
+		public string $username,
+		public Skin $skin,
+		public array $extra_data,
+		public array $behaviours
 	){}
 
 	public function setUuid(UuidInterface $uuid) : self{

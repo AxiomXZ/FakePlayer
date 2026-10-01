@@ -12,14 +12,12 @@ use pocketmine\network\mcpe\protocol\ClientboundPacket;
  */
 final class FakePlayerSpecificPacketListener implements FakePlayerPacketListener{
 
-	/** @var FakePlayerPacketListener[][] */
+	/** @var array<class-string<ClientboundPacket>, array<int, FakePlayerPacketListener>> */
 	private array $listeners = [];
 
 	/**
-	 * @param string $packet
+	 * @param class-string<ClientboundPacket> $packet
 	 * @param FakePlayerPacketListener $listener
-	 *
-	 * @phpstan-param class-string<ClientboundPacket> $packet
 	 */
 	public function register(string $packet, FakePlayerPacketListener $listener) : void{
 		$this->listeners[$packet][spl_object_id($listener)] = $listener;

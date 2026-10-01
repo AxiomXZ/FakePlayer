@@ -14,7 +14,7 @@ final class FakePlayer{
 	readonly public FakePlayerNetworkSession $session;
 	readonly public Player $player;
 
-	/** @phpstan-var SortedMap<int, FakePlayerBehaviour> */
+	/** @var SortedMap<int, FakePlayerBehaviour> */
 	private SortedMap $behaviours;
 
 	/** @var array<string, mixed> */

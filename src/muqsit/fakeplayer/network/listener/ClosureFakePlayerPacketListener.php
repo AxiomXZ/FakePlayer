@@ -11,6 +11,7 @@ use pocketmine\utils\Utils;
 
 final class ClosureFakePlayerPacketListener implements FakePlayerPacketListener{
 
+	/** @var Closure(ClientboundPacket, NetworkSession) : void */
 	private Closure $listener;
 
 	public function __construct(Closure $closure){

@@ -12,10 +12,8 @@ interface FakePlayerBehaviour{
 	public static function init(Loader $plugin) : void;
 
 	/**
-	 * @param mixed[] $data
+	 * @param array<string, mixed> $data
 	 * @return static
-	 *
-	 * @phpstan-param array<string, mixed> $data
 	 */
 	public static function create(array $data) : self;
 
