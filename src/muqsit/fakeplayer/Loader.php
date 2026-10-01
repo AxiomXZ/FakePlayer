@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace muqsit\fakeplayer;
 
+use Closure;
 use InvalidArgumentException;
 use muqsit\fakeplayer\behaviour\FakePlayerBehaviourFactory;
 use muqsit\fakeplayer\behaviour\internal\FakePlayerMovementData;
@@ -41,6 +42,7 @@ use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
 use RuntimeException;
+use function array_map;
 use function array_merge;
 use function file_get_contents;
 
@@ -220,21 +222,28 @@ final class Loader extends PluginBase implements Listener{
 	}
 
 	/**
-	 * @return array<string, Promise<Player>>
+	 * @return array<string, FakePlayerInfo>
 	 */
-	public function addConfiguredPlayers() : array{
+	public function readConfiguredPlayers() : array{
 		$players = json_decode(Filesystem::fileGetContents($this->getDataFolder() . "players.json"), true, 512, JSON_THROW_ON_ERROR);
 
 		$skin_data = file_get_contents($this->getResourcePath("skin.rgba"));
 		$skin_data !== false || throw new RuntimeException("Failed to read default skin data");
 		$skin = new Skin("Standard_Custom", $skin_data);
 
-		$promises = [];
+		$result = [];
 		foreach($players as $uuid => $data){
 			["xuid" => $xuid, "gamertag" => $gamertag] = $data;
-			$promises[$uuid] = $this->addPlayer(new FakePlayerInfo(Uuid::fromString($uuid), $xuid, $gamertag, $skin, $data["extra_data"] ?? [], $data["behaviours"] ?? []));
+			$result[$uuid] = new FakePlayerInfo(Uuid::fromString($uuid), $xuid, $gamertag, $skin, $data["extra_data"] ?? [], $data["behaviours"] ?? []);
 		}
-		return $promises;
+		return $result;
+	}
+
+	/**
+	 * @return array<string, Promise<Player>>
+	 */
+	public function addConfiguredPlayers() : array{
+		return array_map($this->addPlayer(...), $this->readConfiguredPlayers());
 	}
 
 	/**
