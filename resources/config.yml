@@ -1,5 +1,6 @@
 # Number of ticks to defer adding configured players by.
 # NOTE:    Set to -1 to not have any delay (players are added soon as this plugin is enabled).
+# NOTE:    Set to null to never auto-add configured players (use this if you prefer externally controlling fake player joins).
 # WARNING: Setting the delay to -1 can have unexpected consequences as fake players would be
 #          added while this plugin is enabled, during which others plugins may or may not be
 #          enabled and hence events such as PlayerLoginEvent would never notice the player.
