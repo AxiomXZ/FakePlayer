@@ -37,6 +37,7 @@ use pocketmine\scheduler\ClosureTask;
 use pocketmine\utils\Filesystem;
 use pocketmine\utils\Limits;
 use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -45,6 +46,7 @@ use Symfony\Component\Filesystem\Path;
 use function array_map;
 use function array_merge;
 use function file_get_contents;
+use function strtolower;
 
 final class Loader extends PluginBase implements Listener{
 
@@ -233,6 +235,24 @@ final class Loader extends PluginBase implements Listener{
 			$result[$uuid->toString()] = new FakePlayerInfo($uuid, $xuid, $gamertag, $skin, $data["extra_data"] ?? [], $data["behaviours"] ?? []);
 		}
 		return $result;
+	}
+
+	public function readConfiguredPlayerByGamertag(string $gamertag) : ?FakePlayerInfo{
+		foreach($this->readConfiguredPlayers() as $player){
+			if(strtolower($player->username) === strtolower($gamertag)){
+				return $player;
+			}
+		}
+		return null;
+	}
+
+	public function readConfiguredPlayerByUuid(UuidInterface $uuid) : ?FakePlayerInfo{
+		foreach($this->readConfiguredPlayers() as $player){
+			if($player->uuid->equals($uuid)){
+				return $player;
+			}
+		}
+		return null;
 	}
 
 	/**
