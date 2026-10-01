@@ -42,6 +42,7 @@ use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
 use RuntimeException;
+use Symfony\Component\Filesystem\Path;
 use function array_map;
 use function array_merge;
 use function file_get_contents;
@@ -225,7 +226,7 @@ final class Loader extends PluginBase implements Listener{
 	 * @return array<string, FakePlayerInfo>
 	 */
 	public function readConfiguredPlayers() : array{
-		$players = json_decode(Filesystem::fileGetContents($this->getDataFolder() . "players.json"), true, 512, JSON_THROW_ON_ERROR);
+		$players = json_decode(Filesystem::fileGetContents(Path::join($this->getDataFolder(), "players.json")), true, 512, JSON_THROW_ON_ERROR);
 
 		$skin_data = file_get_contents($this->getResourcePath("skin.rgba"));
 		$skin_data !== false || throw new RuntimeException("Failed to read default skin data");
