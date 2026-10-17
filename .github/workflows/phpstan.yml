@@ -1,0 +1,42 @@
+name: PHPStan Analysis
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  phpstan:
+    name: PHPStan Analysis (PHP ${{ matrix.php-version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ["8.2", "8.3"]
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup PHP
+        uses: axolotl-pm/setup-php-action@1.0.0
+        with:
+          php-version: ${{ matrix.php-version }}
+          install-path: "./bin"
+
+      - name: Restore Composer package cache
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.cache/composer/files
+            ~/.cache/composer/vcs
+          key: composer-cache-${{ matrix.php-version }}
+          restore-keys: |
+            composer-cache-
+
+      - name: Install dependencies
+        run: |
+          composer require --dev phpstan/phpstan:^2.2
+          composer require axolotl-pm/pocketmine-mp:^5.50.0
+
+      - name: Run PHPStan
+        run: vendor/bin/phpstan analyze src --level=8
