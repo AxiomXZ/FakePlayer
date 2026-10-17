@@ -112,7 +112,7 @@ final class Loader extends PluginBase implements Listener{
 		}elseif($configured_players_add_delay !== null){
 			$this->getScheduler()->scheduleDelayedTask(new ClosureTask(function() : void{
 				$this->addConfiguredPlayers();
-			}), (int) $configured_players_add_delay);
+			}), (int) configured_players_add_delay);
 		}
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 	}
