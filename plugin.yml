@@ -1,7 +1,7 @@
 name: FakePlayer
 main: muqsit\fakeplayer\Loader
-api: 5.35.0
-version: 0.3.0
+api: 5.50.0
+version: 0.4.0
 
 permissions:
   fakeplayer.command.fakeplayer:
