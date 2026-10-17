@@ -22,7 +22,11 @@ final class FakePlayer{
 
 	public function __construct(FakePlayerNetworkSession $session){
 		$this->session = $session;
-		$this->player = $session->getPlayer();
+
+		$player = $session->getPlayer();
+		assert($player instanceof Player);
+		$this->player = $player;
+
 		$this->behaviours = new SortedMap();
 	}
 
@@ -30,13 +34,6 @@ final class FakePlayer{
 	 * @deprecated use {@see self::$player} directly.
 	 */
 	public function getPlayer() : Player{
-		return $this->player;
-	}
-
-	/**
-	 * @deprecated use {@see self::$player} directly.
-	 */
-	public function getPlayerNullable() : ?Player{
 		return $this->player;
 	}
 

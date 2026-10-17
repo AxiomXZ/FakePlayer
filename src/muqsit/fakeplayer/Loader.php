@@ -25,6 +25,7 @@ use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\network\mcpe\protocol\ResourcePackClientResponsePacket;
 use pocketmine\network\mcpe\protocol\types\DeviceOS;
 use pocketmine\network\mcpe\protocol\types\InputMode;
+use pocketmine\network\mcpe\protocol\types\ResourcePackClientResponseStatus;
 use pocketmine\network\mcpe\protocol\types\login\clientdata\ClientData;
 use pocketmine\network\mcpe\StandardEntityEventBroadcaster;
 use pocketmine\network\mcpe\StandardPacketBroadcaster;
@@ -40,6 +41,7 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use ReflectionClass;
 use ReflectionMethod;
+use ReflectionNamedType;
 use ReflectionProperty;
 use RuntimeException;
 use Symfony\Component\Filesystem\Path;
@@ -77,7 +79,8 @@ final class Loader extends PluginBase implements Listener{
 				continue;
 			}
 
-			$this->default_extra_data[$property_name] = $property->hasDefaultValue() ? $property->getDefaultValue() : match($property->getType()?->getName()){
+			$type = $property->getType();
+			$this->default_extra_data[$property_name] = $property->hasDefaultValue() ? $property->getDefaultValue() : match($type instanceof ReflectionNamedType ? $type->getName() : null){
 				"string" => "",
 				"int" => 0,
 				"array" => [],
@@ -109,7 +112,7 @@ final class Loader extends PluginBase implements Listener{
 		}elseif($configured_players_add_delay !== null){
 			$this->getScheduler()->scheduleDelayedTask(new ClosureTask(function() : void{
 				$this->addConfiguredPlayers();
-			}), (int) configured_players_add_delay);
+			}), (int) $configured_players_add_delay);
 		}
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 	}
@@ -118,7 +121,9 @@ final class Loader extends PluginBase implements Listener{
 		$this->listeners[spl_object_id($listener)] = $listener;
 		$server = $this->getServer();
 		foreach($this->fake_players as $uuid => $_){
-			$listener->onPlayerAdd($server->getPlayerByRawUUID($uuid));
+			$player = $server->getPlayerByRawUUID($uuid);
+			assert($player instanceof Player);
+			$listener->onPlayerAdd($player);
 		}
 	}
 
@@ -167,7 +172,7 @@ final class Loader extends PluginBase implements Listener{
 		$rp = new ReflectionMethod(NetworkSession::class, "onServerLoginSuccess");
 		$rp->invoke($session);
 
-		$packet = ResourcePackClientResponsePacket::create(ResourcePackClientResponsePacket::STATUS_COMPLETED, []);
+		$packet = ResourcePackClientResponsePacket::create(ResourcePackClientResponseStatus::COMPLETED, []);
 		$serializer = new ByteBufferWriter();
 		$packet->encode($serializer);
 		$session->handleDataPacket($packet, $serializer->getData());
@@ -234,7 +239,7 @@ final class Loader extends PluginBase implements Listener{
 		foreach($players as $uuid_string => $data){
 			["xuid" => $xuid, "gamertag" => $gamertag] = $data;
 			$uuid = Uuid::fromString($uuid_string);
-			$result[$uuid->toString()] = new FakePlayerInfo($uuid, $xuid, $gamertag, $skin, $data["extra_data"] ?? [], $data["behaviours"] ?? []);
+			$result[strtolower($uuid->toString())] = new FakePlayerInfo($uuid, $xuid, $gamertag, $skin, $data["extra_data"] ?? [], $data["behaviours"] ?? []);
 		}
 		return $result;
 	}

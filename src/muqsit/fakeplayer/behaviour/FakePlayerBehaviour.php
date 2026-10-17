@@ -13,7 +13,7 @@ interface FakePlayerBehaviour{
 
 	/**
 	 * @param array<string, mixed> $data
-	 * @return static
+	 * @return self
 	 */
 	public static function create(array $data) : self;
 

@@ -52,6 +52,7 @@ final class DefaultFakePlayerListener implements FakePlayerListener{
 					$player = $session->getPlayer();
 					$player->respawn();
 					$fake_player = $this->plugin->getFakePlayer($player);
+					assert($fake_player instanceof FakePlayer);
 					foreach($fake_player->getBehaviours() as $behaviour){
 						$behaviour->onRespawn($fake_player);
 					}
