@@ -79,7 +79,10 @@ class FakePlayerNetworkSession extends NetworkSession{
 			$this->specific_packet_listener = new FakePlayerSpecificPacketListener();
 			$this->registerPacketListener($this->specific_packet_listener);
 		}
-		$this->specific_packet_listener->register($packet, $listener);
+
+		$specific_packet_listener = $this->specific_packet_listener;
+        assert($specific_packet_listener instanceof FakePlayerSpecificPacketListener);
+        $specific_packet_listener->register($packet, $listener);
 	}
 
 	public function unregisterSpecificPacketListener(string $packet, FakePlayerPacketListener $listener) : void{
@@ -116,7 +119,9 @@ class FakePlayerNetworkSession extends NetworkSession{
 			$this->onPlayerCreated($player);
 		}, function() : void{
 			$this->disconnect("Player creation failed");
-			$this->player_add_resolver->reject();
+			$player_add_resolver = $this->player_add_resolver;
+            assert($player_add_resolver instanceof PromiseResolver);
+            $player_add_resolver->reject();
 		});
 	}
 
@@ -124,6 +129,8 @@ class FakePlayerNetworkSession extends NetworkSession{
 		// call parent private method
 		$rm = new ReflectionMethod(NetworkSession::class, "onPlayerCreated");
 		$rm->invoke($this, $player);
-		$this->player_add_resolver->resolve($player);
+		$player_add_resolver = $this->player_add_resolver;
+        assert($player_add_resolver instanceof PromiseResolver);
+        $player_add_resolver->resolve($player);
 	}
 }
