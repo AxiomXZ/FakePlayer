@@ -14,6 +14,7 @@ use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\network\mcpe\PacketBroadcaster;
 use pocketmine\network\mcpe\PacketSender;
 use pocketmine\network\mcpe\protocol\PacketPool;
+use pocketmine\network\mcpe\protocol\ClientboundPacket;
 use pocketmine\network\NetworkSessionManager;
 use pocketmine\player\Player;
 use pocketmine\promise\PromiseResolver;
@@ -74,6 +75,9 @@ class FakePlayerNetworkSession extends NetworkSession{
 		unset($this->packet_listeners[spl_object_id($listener)]);
 	}
 
+	/**
+	 * @param class-string<ClientboundPacket> $packet
+	*/
 	public function registerSpecificPacketListener(string $packet, FakePlayerPacketListener $listener) : void{
 		if($this->specific_packet_listener === null){
 			$this->specific_packet_listener = new FakePlayerSpecificPacketListener();
