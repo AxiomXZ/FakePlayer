@@ -40,6 +40,7 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use ReflectionClass;
 use ReflectionMethod;
+use ReflectionNamedType;
 use ReflectionProperty;
 use RuntimeException;
 use Symfony\Component\Filesystem\Path;
@@ -77,7 +78,8 @@ final class Loader extends PluginBase implements Listener{
 				continue;
 			}
 
-			$this->default_extra_data[$property_name] = $property->hasDefaultValue() ? $property->getDefaultValue() : match($property->getType()?->getName()){
+			$type = $property->getType();
+			$this->default_extra_data[$property_name] = $property->hasDefaultValue() ? $property->getDefaultValue() : match($type instanceof ReflectionNamedType ? $type->getName() : null){
 				"string" => "",
 				"int" => 0,
 				"array" => [],
