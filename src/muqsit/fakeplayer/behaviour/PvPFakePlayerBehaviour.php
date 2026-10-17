@@ -15,8 +15,8 @@ use pocketmine\player\Player;
 
 class PvPFakePlayerBehaviour implements FakePlayerBehaviour{
 
-	public static function create(array $data) : static{
-		return new static($data["reach_distance"], $data["pvp_idle_time"] ?? 500);
+	public static function create(array $data) : self{
+		return new self($data["reach_distance"], $data["pvp_idle_time"] ?? 500);
 	}
 
 	public static function init(Loader $plugin) : void{
